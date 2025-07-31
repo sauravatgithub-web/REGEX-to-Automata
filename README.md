@@ -40,24 +40,17 @@ When prompted, enter a regex using `.` for concatenation, `|` for union, `*` for
 ### Example 1
 **Input Regex**: `a|b`
 
-![NFA for a|b](nfa1.png)
+![NFA for a|b](examples/nfa1.png)
+![DFA for a|b](examples/dfa1.png)
 
 ### Example 2
-**Input Regex**: `a.b`
-
-![NFA for a.b](nfa2.png)
-
-### Example 3
-**Input Regex**: `(a.b)*`
-
-![NFA for (a.b)*](nfa3.png)
-
-### Example 4
 **Input Regex**: `(b|c)*`
 
-![NFA for (b|c)*](nfa4.png)
+![NFA for (b|c)*](examples/nfa2.png)
+![DFA for (b|c)*](examples/nfa2.png)
 
-### Example 5
+### Example 3
 **Input Regex**: `a.(b|c)*`
 
-![NFA for a.(b|c)*](nfa5.png)
+![NFA for a.(b|c)*](examples/nfa3.png)
+![DFA for a.(b|c)*](examples/nfa3.png)
