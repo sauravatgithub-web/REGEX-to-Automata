@@ -1,0 +1,9 @@
+digraph Automaton {
+    rankdir=LR;
+    node [shape=circle];
+
+    __start__ [shape=point];
+    __start__ -> s1;
+    s2 [shape=doublecircle];
+    s1 -> s2 [label="a"];
+}
