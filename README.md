@@ -1,4 +1,4 @@
-# Regular Expression to NFA Converter & Visualizer
+# Regular Expression to NFA and DFA Converter & Visualizer
 
 This C++ program converts a regular expression into its equivalent Nondeterministic Finite Automaton (NFA) and further an equivalent Deterministic Finite Automation (DFA) using Thompson's construction. It also generates a DOT file to create a visual representation of the resulting NFA using Graphviz.
 
