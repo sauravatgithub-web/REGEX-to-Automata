@@ -4,20 +4,13 @@ digraph Automaton {
 
     __start__ [shape=point];
     __start__ -> s1;
+    s1 [shape=doublecircle];
     s2 [shape=doublecircle];
     s3 [shape=doublecircle];
-    s4 [shape=doublecircle];
-    s1 -> s2 [label="a"];
-    s1 -> s_dead [label="b"];
-    s1 -> s_dead [label="c"];
-    s2 -> s_dead [label="a"];
-    s2 -> s3 [label="b"];
-    s2 -> s4 [label="c"];
-    s3 -> s_dead [label="a"];
-    s3 -> s3 [label="b"];
-    s3 -> s4 [label="c"];
-    s4 -> s_dead [label="a"];
-    s4 -> s3 [label="b"];
-    s4 -> s4 [label="c"];
-    s_dead [label="dead"];
+    s1 -> s2 [label="b"];
+    s1 -> s3 [label="c"];
+    s2 -> s2 [label="b"];
+    s2 -> s3 [label="c"];
+    s3 -> s2 [label="b"];
+    s3 -> s3 [label="c"];
 }

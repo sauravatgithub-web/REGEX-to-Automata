@@ -47,10 +47,10 @@ When prompted, enter a regex using `.` for concatenation, `|` for union, `*` for
 **Input Regex**: `(b|c)*`
 
 ![NFA for (b|c)*](examples/nfa2.png)
-![DFA for (b|c)*](examples/nfa2.png)
+![DFA for (b|c)*](examples/dfa2.png)
 
 ### Example 3
 **Input Regex**: `a.(b|c)*`
 
 ![NFA for a.(b|c)*](examples/nfa3.png)
-![DFA for a.(b|c)*](examples/nfa3.png)
+![DFA for a.(b|c)*](examples/dfa3.png)
