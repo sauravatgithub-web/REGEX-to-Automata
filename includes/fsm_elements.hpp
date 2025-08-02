@@ -11,6 +11,10 @@ public:
         return val == other.val;
     }    
 
+    bool operator!=(const State& other) const {
+        return val != other.val;
+    }    
+
     bool operator<(const State& other) const {
         return val < other.val;
     }

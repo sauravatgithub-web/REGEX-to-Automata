@@ -6,7 +6,7 @@ This C++ program converts a regular expression into its equivalent Nondeterminis
 
 * **Postfix Conversion**: Converts standard regular expressions to postfix notation.
 * **Thompson's Construction**: Builds an NFA from a postfix regular expression.
-* **DFA Construction**: Builds an DFA from a generated NFA.
+* **DFA Construction**: Builds an DFA from a generated NFA and also state reduction.
 * **NFA and DFA Visualization**: Generates a `.dot` file for visualization in the dots folder and corresponding diagrams in diagrams folder.
 
 ## Prerequisites

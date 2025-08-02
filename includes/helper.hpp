@@ -26,10 +26,13 @@ void helper(std::string expression, int input) {
     std::cout << std::endl << std::endl;
     
     DFA dfa = DFA();
-    dfa.create_dfa(nfa, stateTransitions, postfix.back() == '*');
+    dfa.create_dfa(nfa, stateTransitions, stateTransitions[{nfa.initial_state, EPSILON}].count(nfa.final_state));
+
+    minimized_DFA mini_dfa = dfa.state_reduction();
     
-    if(input == 1 || input == 3) nfa.print();
-    if(input == 2 || input == 3) dfa.print();
+    if(input == 1 || input == 4) nfa.print();
+    if(input == 2 || input == 4) dfa.print();
+    if(input == 3 || input == 4) mini_dfa.print();
 }
 
 std::map<std::pair<State, char>, std::set<State>> createTransitionMap(NFA nfa) {
@@ -47,7 +50,7 @@ void fill_epsilon_inputs(NFA nfa, std::map<std::pair<State, char>, std::set<Stat
     }
     for(State s : nfa.states) stateTransitions[{s, EPSILON}].insert(s);
     
-    for(auto transits : stateTransitions) {
+    for(auto& transits : stateTransitions) {
         if(transits.first.second == EPSILON) {
             for(State state : transits.second) {
                 for(State nextStates : stateTransitions[{state, EPSILON}]) {
