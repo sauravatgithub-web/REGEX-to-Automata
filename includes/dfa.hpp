@@ -74,6 +74,8 @@ void DFA::create_dfa(NFA nfa, std::map<std::pair<State, char>, std::set<State>>&
     initial_state = State(1);
     if(ep) final_states.push_back(initial_state);
 
+    bool is_null_state = false;
+
     for(auto newStates : stateMap) {
         State s = State(newStates.second);
         states.push_back(s);
@@ -87,6 +89,10 @@ void DFA::create_dfa(NFA nfa, std::map<std::pair<State, char>, std::set<State>>&
         }
         if(find) final_states.push_back(s);
     }
+
+    if(is_null_state) {
+        for(char input : alphabets) transitions.push_back(Transitions(input, NULL_STATE, NULL_STATE));
+    }
 }
 
 minimized_DFA DFA::state_reduction() {
@@ -97,49 +103,59 @@ minimized_DFA DFA::state_reduction() {
     }
 
     // Step 2: Initialize partition — final vs non-final
-    std::vector<std::vector<State>> state_holder;
+    std::set<std::set<State>> state_holder;
     std::set<State> final_set(final_states.begin(), final_states.end());
-    
-    std::vector<State> non_finals;
+    std::set<State> non_finals;
+
     for(const auto& s : states) {
         if(final_set.find(s) == final_set.end()) {
-            non_finals.push_back(s);
+            non_finals.insert(s);
         }
     }
 
-    if(!final_states.empty()) state_holder.push_back(final_states);
-    if(!non_finals.empty())  state_holder.push_back(non_finals);
+    if(!final_set.empty()) state_holder.insert(final_set);
+    if(!non_finals.empty()) state_holder.insert(non_finals);
 
     // Step 3: Iteratively refine the partition
     while(true) {
+        // Normalize state_holder into a vector of sorted vectors
+        std::vector<std::vector<State>> normalized;
+        for(const auto& group : state_holder) {
+            std::vector<State> sorted_group(group.begin(), group.end());
+            std::sort(sorted_group.begin(), sorted_group.end());
+            normalized.push_back(sorted_group);
+        }
+        std::sort(normalized.begin(), normalized.end());
+
+        // Build state_to_partition using stable partition IDs
         std::map<State, int> state_to_partition;
-        for(int i = 0; i < state_holder.size(); ++i) {
-            for(const auto& s : state_holder[i]) {
+        for(int i = 0; i < normalized.size(); ++i) {
+            for(const State& s : normalized[i]) {
                 state_to_partition[s] = i;
             }
         }
 
-        std::map<std::vector<int>, std::vector<State>> signature_map;
-
+        // Refine the partitions
+        std::set<std::set<State>> new_state_holder;
         for(const auto& group : state_holder) {
-            for(const auto& s : group) {
+            std::map<std::vector<int>, std::set<State>> signature_map;
+            for(const State& s : group) {
                 std::vector<int> signature;
-                for(const auto& c : alphabets) {
+                for(const char& c : alphabets) {
                     auto it = state_transitions.find({s, c});
                     if(it != state_transitions.end()) {
                         signature.push_back(state_to_partition[it->second]);
                     } 
                     else {
-                        signature.push_back(-1); // special code for missing transition
+                        signature.push_back(-1); // missing transition
                     }
                 }
-                signature_map[signature].push_back(s);
+                signature_map[signature].insert(s);
             }
-        }
 
-        std::vector<std::vector<State>> new_state_holder;
-        for(auto& [_, group] : signature_map) {
-            new_state_holder.push_back(group);
+            for(auto& it : signature_map) {
+                new_state_holder.insert(it.second);
+            }
         }
 
         if(new_state_holder == state_holder) break;
@@ -151,22 +167,26 @@ minimized_DFA DFA::state_reduction() {
     mini_dfa.alphabets = alphabets;
 
     std::map<State, State> old_to_new_state;
-    std::map<int, State> partition_id_to_state;
+    std::vector<std::set<State>> ordered_holder(state_holder.begin(), state_holder.end());
+
+    // Normalize partition order
+    std::sort(ordered_holder.begin(), ordered_holder.end(), [](const std::set<State>& a, const std::set<State>& b) {
+        return *a.begin() < *b.begin();
+    });
 
     int state_id = 0;
-    for(int i = 0; i < state_holder.size(); ++i) {
+    for(const auto& group : ordered_holder) {
         State rep(state_id++);
-        for(const auto& old_state : state_holder[i]) {
+        for(const auto& old_state : group) {
             old_to_new_state[old_state] = rep;
         }
-        partition_id_to_state[i] = rep;
         mini_dfa.states.push_back(rep);
     }
 
-    // Set minimized initial state
+    // Set initial state
     mini_dfa.initial_state = old_to_new_state[initial_state];
 
-    // Set minimized final states
+    // Set final states
     std::set<State> added_finals;
     for(const auto& s : final_states) {
         State new_s = old_to_new_state[s];
@@ -176,13 +196,13 @@ minimized_DFA DFA::state_reduction() {
         }
     }
 
-    // Build transitions
-    // std::pair<State, char> key;
-    // State dest;
+    // Set transitions
     std::set<std::tuple<State, char, State>> seen_transitions;
-    for (const auto& [key, dest] : state_transitions) {
+    for(const auto& it : state_transitions) {
+        auto key = it.first;
+        auto dest = it.second;
         const State& src = key.first;
-        char input = key.second;
+        const char& input = key.second;
         State new_src = old_to_new_state[src];
         State new_dest = old_to_new_state[dest];
 

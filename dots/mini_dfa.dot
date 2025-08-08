@@ -3,10 +3,8 @@ digraph Automaton {
     node [shape=circle];
 
     __start__ [shape=point];
-    __start__ -> s2;
+    __start__ -> s0;
     s1 [shape=doublecircle];
-    s2 -> s1 [label="a"];
-    s2 -> s1 [label="b"];
-    s1 -> s0 [label="a"];
-    s1 -> s0 [label="b"];
+    s0 -> s1 [label="a"];
+    s1 -> s1 [label="a"];
 }

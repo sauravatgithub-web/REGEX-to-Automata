@@ -26,7 +26,7 @@ void NFA::create_nfa(std::string regex) {
             Transitions t(ch, s1, s2);
             states.push_back(s1);
             states.push_back(s2);
-            alphabets.push_back(ch);
+            alphabets.insert(ch);
             transitions.push_back(t);
             statePairs.push({s1, s2});
         }
@@ -81,6 +81,16 @@ void NFA::create_nfa(std::string regex) {
                 default : break;
             }
         }
+    }
+
+    if(statePairs.size() > 1) {
+        std::pair<State, State> p2 = statePairs.top();
+        statePairs.pop();
+        std::pair<State, State> p1 = statePairs.top();
+        statePairs.pop();
+        Transitions t(EPSILON, p1.second, p2.first);
+        transitions.push_back(t);
+        statePairs.push({p1.first, p2.second});
     }
 
     initial_state = statePairs.top().first;

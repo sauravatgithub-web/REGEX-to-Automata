@@ -4,13 +4,14 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <unordered_set>
 #include "fsm_elements.hpp"
 #include "definitions.hpp"
 
 class Automata {
 public:
     std::vector<State> states;
-    std::vector<char> alphabets;
+    std::unordered_set<char> alphabets;
     std::vector<Transitions> transitions;
     State initial_state;
 
