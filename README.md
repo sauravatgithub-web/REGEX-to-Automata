@@ -35,6 +35,14 @@ Execute the program from your terminal:
 ### Step 3: Enter a Regular Expression
 When prompted, enter a regex using `.` for concatenation, `|` for union, `*` for the Kleene star, and `()` for grouping.
 
+## Code Description
+
+The regular expression is sent to helper function where first, it is converted to postfix form with a precedence defined among operators : '*', '?' > '.' > '|'. First, concatenation operator is put at appropriate places and then using standard stack technique, regex is converted to postfix form using toPostfix function in includes/regex_postfix.hpp  
+
+The second step involves creating NFA using standard NFA diagrams for each of the operators by using the **Thomson's construction method**. Then createTransitionMap function in includes/helper.hpp is used to create transition map for each of the states and corresponding alphabets. 
+
+This transition map is passed to create_dfa function in dfa.hpp where **subset-construction method** is used to create NFA. Further, DFA is minimized using state_reduction function in dfa.hpp using **Moore's algorithm** or **iterative refinement method**. Further, Automata class i.e. the parent of dfa and nfa also has a print method defined to print all transitions.
+
 ## Examples
 
 ### Example 1
